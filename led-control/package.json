@@ -1,0 +1,33 @@
+{
+  "name": "led-control",
+  "version": "1.0.0",
+  "description": "App controlling led strips on RPi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keymetrics/led-control.git"
+  },
+  "author": "Florian H-J",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/keymetrics/led-control/issues"
+  },
+  "homepage": "https://github.com/keymetrics/led-control#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "chalk": "^2.3.0",
+    "express": "^4.16.2",
+    "ffmpeg.js": "^3.1.9001",
+    "fluent-ffmpeg": "^2.1.2",
+    "kmjs-core": "^0.2.1",
+    "measured": "^1.1.0",
+    "node-schedule": "^1.2.5",
+    "pmx": "^1.5.5",
+    "rpi-ws281x-native": "^0.8.2",
+    "youtube-dl": "^1.12.2",
+    "google-tts-api": "*"
+  }
+}
