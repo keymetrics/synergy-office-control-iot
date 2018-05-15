@@ -1,0 +1,17 @@
+{
+  "name": "dcv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dmx": "0.0.5",
+    "joystick": "^0.1.2",
+    "pmx": "latest",
+    "easy-voice": "latest"
+  }
+}
