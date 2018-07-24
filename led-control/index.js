@@ -105,7 +105,7 @@ class LedStrip {
     var self = this;
 
     pmx.action('newcustomer', function(reply) {
-      Voice('Congratulation, new customer from Paypal enteprise.', function() {
+      Voice('New Customer On-boarded. I love you.', function() {
         self.setEffect('NewCustomer', 3);
       });
       reply({success:true});
