@@ -22,7 +22,7 @@
     "express": "^4.16.2",
     "ffmpeg.js": "^3.1.9001",
     "fluent-ffmpeg": "^2.1.2",
-    "kmjs-core": "^0.2.1",
+    "@pm2/js-api": "latest",
     "measured": "^1.1.0",
     "node-schedule": "^1.2.5",
     "pmx": "^1.5.5",

@@ -1,9 +1,10 @@
+
 const express = require('express')
 const bodyParser = require('body-parser');
 const leds = require('rpi-ws281x-native')
 const nbLeds = require('./config/config.js').ledCount
 const schedule = require('node-schedule');
-const Keymetrics = require('kmjs-core')
+const Keymetrics = require('@pm2/js-api')
 const Measured = require('measured')
 const pmx = require('pmx')
 const Voice = require('./voice.js');
@@ -64,40 +65,34 @@ class LedStrip {
   keymetricsIntegration() {
     var self = this;
     let km = new Keymetrics()
-    var meter = new Measured.Meter();
 
     km.use('standalone', {
-      refresh_token: process.env.KM_CORE
+      refresh_token: '2xildyzdutibhnf83mwxsuolqkfpcc4pixysel7my717wxorxxd61hafmi3b37au'
     })
 
     km.bucket.retrieveAll()
       .then((res) => {
         // find our bucket
-        let bucket = res.data.find(bucket => bucket.name === 'Keymetrics')
+        let bucket = res.data.find(bucket => bucket.name === 'Keymetrics - Production')
         km.realtime.subscribe(bucket._id).catch(console.error);
 
         km.realtime.on(`${bucket.public_id}:*:human:event`, function(events) {
-          events.forEach(function(event) {
-            if (event.name == 'new:real:customer' || event.name == 'new:real:update:subscription') {
-              self.setEffect('NewCustomer', 4);
-              console.log(new Date(), 'NEW CUSTOMER');
-            }
+          events.forEach(function(_event) {
+            _event.forEach(function(event) {
+              if (event.name == 'new:real:customer' || event.name == 'new:real:update:subscription') {
+                Voice(`New Customer Subscribed with plan ${event.data.plan}`, function() {
+                  self.setEffect('NewCustomer', 4);
+                })
+              }
 
-            if (event.name == 'bucket:feedback') {
-              self.setEffect('Churn', 4);
-              console.log(new Date(), 'NEW CUSTOMER');
-            }
+              if (event.name == 'bucket:feedback') {
+                Voice(`Customer Lost, reason: ${event.data.feedback}`, function() {
+                  self.setEffect('Churn', 4);
+                })
+              }
+            })
           });
         })
-
-        var i = 0;
-
-        setInterval(function() {
-          var stats = meter.toJSON();
-
-          if (stats.currentRate > 0.1)
-            self.setEffect('Error', 10);
-        }, 10000);
       })
   }
 
@@ -227,11 +222,11 @@ class LedStrip {
 
   schedule() {
     // Standup start
-    schedule.scheduleJob('15 10 * * *', function(){
-      zoneColor('FF0000', '00FF00', '0000FF', 20);
+    schedule.scheduleJob('15 10 * * *', () => {
+      this.zoneColor('FF0000', '00FF00', '0000FF', 20);
 
-      setTimeout(function() {
-	      zoneColor('FF0000', '00FF00', '0000FF', 20);
+      setTimeout(() => {
+	      this.zoneColor('FF0000', '00FF00', '0000FF', 20);
       }, 1500);
     });
 
@@ -241,16 +236,16 @@ class LedStrip {
     });
 
     // France time
-    schedule.scheduleJob('30 11 * * *', function(){
-      zoneColor('0000FF', 'FFFFFF', 'FF0000', 20);
+    schedule.scheduleJob('30 11 * * *', () => {
+      this.zoneColor('0000FF', 'FFFFFF', 'FF0000', 20);
       setTimeout(function() {
 	      leds.reset();
       }, 1000 * 30);
     });
 
     // Food time
-    schedule.scheduleJob('30 12 * * *', function(){
-      zoneColor('00FF00');
+    schedule.scheduleJob('30 12 * * *', () => {
+      this.zoneColor('00FF00');
 
       setTimeout(function() {
 	      leds.reset();
@@ -258,8 +253,8 @@ class LedStrip {
     });
 
     // Rush
-    schedule.scheduleJob('00 15 * * *', function(){
-      zoneColor('FF0000');
+    schedule.scheduleJob('00 15 * * *', () => {
+      this.zoneColor('FF0000');
 
       setTimeout(function() {
 	      leds.reset();
@@ -312,7 +307,7 @@ class LedStrip {
 
     var color = 'FF0000';
 
-    this.zoneColor('222222', 'FF0000', '222222', 100);
+    this.zoneColor('FF0000', 'FF0000', 'FF0000', 100);
 
     setTimeout(function() {
       self.clear();
