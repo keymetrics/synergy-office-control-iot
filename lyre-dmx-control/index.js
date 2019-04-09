@@ -1,6 +1,7 @@
 var DMX = require('dmx');
 var pmx = require('pmx');
 var Voice = require('easy-voice');
+var lyre_mapping = require('./mappings/lyre.js');
 
 var A = DMX.Animation;
 
@@ -34,10 +35,8 @@ function run(address, mapping, map_addressage, override) {
     return result;
   }
 
-  addressMapping(addres, mapping, map_addressage, override);
+  addressMapping(address, mapping, map_addressage, override);
 }
-
-var lyre_mapping = require('./mappings/lyre.js');
 
 var current_timer = null;
 
@@ -123,27 +122,53 @@ var Lyres = {
 }
 
 // Expose all Lyres method as PM2 server actions
-Object.keys(Lyres).forEach(function(action) {
-  pmx.action(action, function(reply) {
-    if (typeof(data) == 'function') {
-      reply = data;
-      data = ''
-    }
+// Object.keys(Lyres).forEach(function(action) {
+//   pmx.action(action, function(reply) {
+//     if (typeof(data) == 'function') {
+//       reply = data;
+//       data = ''
+//     }
+//     Lyres[action](data);
+//     reply({ success : true, action_name : action });
+//   })
+// });
 
-    Lyres[action](data);
-    reply({ success : true, action_name : action });
-  })
-});
+var timeout = 2000
+function effect() {
+  universe.update(run([0, 14], lyre_mapping, 'step1'));
+  setTimeout(() => {
+    universe.update(run([0, 14], lyre_mapping, 'step2'));
+    setTimeout(() => {
+      effect()
+    }, timeout)
+  }, timeout)
+}
+
+effect()
 
 //universe.update(run([0, 14], lyre_mapping, 'sound2'));
 
 //return false;
 
-Voice('Welcome. Synergy Initialized.');
+//Voice('Welcome. Synergy Initialized.');
+
+// var anim = new A()
+//     .add(run([0, 14], lyre_mapping, '9991'), 1000)
+//     .delay(1300)
+//     .add(run([0, 14], lyre_mapping, '9992'), 1000)
+//     .delay(1300)
+//     .add(run([0, 14], lyre_mapping, '9993'), 1000)
+
+// var anim = new A()
+//     .add(run([0, 14], lyre_mapping, 'circle1'), 10000)
+//     .delay(13000)
+//     .add(run([0, 14], lyre_mapping, 'circle2'), 10000)
 
 
-Lyres.strobe();
-setTimeout(function() {
-  Lyres.reset();
-}, 3500);
+// anim.run(universe)
+//Lyres.strobe();
+// Voice('Hello Cel Del', function() {
+
+// });
+
 //Lyres.reset();
